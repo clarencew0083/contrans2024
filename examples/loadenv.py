@@ -1,4 +1,4 @@
 import os
 
-mypassword = os.getenv("MYPASSWORD")
-print(mypassword)
+#mypassword = os.getenv()
+#print(mypassword)
