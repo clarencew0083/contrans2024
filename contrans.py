@@ -101,9 +101,53 @@ class contrans:
             records = pd.json_normalize(r.json()['members'])
             bio_df = pd.concat([bio_df, records], ignore_index=True)
             j = j + 250
+        return bio_df
         #bio_df = pd.json_normalize(r.json(), record_path=['members'])
         #bio_df = pd.json_normalize(records)
         #bio_df = bio_df[['name', 'state', 'district', 'partyName', 'bioguideId']]
 
+    
+    def get_bioguide(self, name, state=None, district=None):
 
-        return bio_df
+        members = self.get_bioguideIDs() # replace with SQL query
+
+        members['name'] = members['name'].str.lower().str.strip()
+        name = name.lower().strip()
+
+        tokeep = [name in x for x in members['name']]
+        members = members[tokeep]
+
+        if state is not None:
+            members = members.query('state == @state')
+        if district is not None:
+            members = members.query('district == @district')
+
+        return members.reset_index(drop=True)
+    
+
+    def get_sponseredLegislation(self, bioguideID):
+
+        params = {'api_key': self.congresskey,
+                  'limit': 1}
+        headers = self.make_headers()
+        root = 'https://api.congress.gov/v3/'
+        endpoint = f'/member/{bioguideID}/sponsored-legislation'
+        r = requests.get(root + endpoint, 
+                         params=params,
+                         )
+        totalrecords = r.json()['pagination']['count']
+        params['limit'] = 250
+        j = 0
+        bills_dict = {}
+        while j < totalrecords:
+            params['offset'] = j
+            r = requests.get(root + endpoint, 
+                             params=params,
+                             )
+            records = r.json()['sponsoredLegislation']
+            bills_dict = bills_dict.update(records)
+            j = j + 250
+
+        return bills_dict
+    
+
