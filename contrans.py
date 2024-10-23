@@ -207,8 +207,8 @@ class contrans:
         bill_json['bill_text'] = billtext
         return bill_json
     
-    def make_cand_table(self):
-            members = self.get_bioguideIDs()
+    def make_cand_table(self, members):
+            # members is output of get_terms()
             replace_map = {'Republican': 'R','Democratic': 'D','Independent': 'I'}
             members['partyletter'] = members['partyName'].replace(replace_map)
             members['state'] = members['state'].replace(self.us_state_to_abbrev)
@@ -235,7 +235,7 @@ class contrans:
             crosswalk = pd.merge(members, cands, 
                     left_on=['name2', 'DistIDRunFor'],
                     right_on=['name2', 'DistIDRunFor'],
-                    how = 'inner')
+                    how = 'left')
             return crosswalk
     
     def terms_df(self, members):
@@ -248,5 +248,31 @@ class contrans:
             termsDF = pd.concat([termsDF, df], ignore_index=True)
         members = members.drop('terms.item', axis=1)
         return termsDF, members
+    
+    ### Memebers for building the 3NF relational DB tables
+
+    def make_members_df(self, members, ideology):
+        '''
+        members should be the output of get_bioguideIDs()
+        with terms removed by get_terms()
+        augmented with contributions by make_cand_table()
+        ideology should be the output of get_ideology()
+        '''
+        members_df = pd.merge(members, ideology, 
+                              left_on='bioguideId',
+                              right_on='bioguide_id', 
+                              how = 'left')
+        return members_df
+    
+    def make_terms_df(self):
+        pass
+
+    def make_votes_df(self):
+        pass
+
+    def make_aggreement_df(self):
+         pass
+    
+
             
 
