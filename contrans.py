@@ -130,27 +130,6 @@ class contrans:
             j = j + 250
         return bio_df
     
-    def get_bioguide(self, name, state=None, district=None):
-            
-            members = self.get_bioguideIDs() # replace with SQL query
-
-            members['name'] = members['name'].str.lower().str.strip()
-            name = name.lower().strip()
-
-            tokeep = [name in x for x in members['name']]
-            members = members[tokeep]
-
-            if state is not None:
-                    members = members.query('state == @state')
-
-            if district is not None:
-                    members = members.query('district == @district')
-            
-            return members.reset_index(drop=True)
-        #bio_df = pd.json_normalize(r.json(), record_path=['members'])
-        #bio_df = pd.json_normalize(records)
-        #bio_df = bio_df[['name', 'state', 'district', 'partyName', 'bioguideId']]
-
     
     def get_bioguide(self, name, state=None, district=None):
 
