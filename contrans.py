@@ -267,6 +267,8 @@ class contrans:
                               right_on='bioguide_id', 
                               how = 'left')
         #dbserver, engine = self.connect_to_postgres(self.POSTGRES_PASSWORD)
+        members_df.columns = members_df.columns.str.lower()
+        members_df.columns = members_df.columns.str.replace('.', '_')
         members_df.to_sql('members', con=engine, 
                           index=False, 
                           chunksize = 1000, 
@@ -274,13 +276,29 @@ class contrans:
      
     
     def make_terms_df(self, terms, engine):
+        terms.columns = terms.columns.str.lower()
         terms.to_sql('terms', con=engine, index=False, chunksize = 1000, if_exists='replace')
 
     def make_votes_df(self, votes, engine):
+        votes.columns = votes.columns.str.lower()
         votes.to_sql('votes', con=engine, index=False, chunksize = 1000, if_exists='replace')
 
     def make_aggreement_df(self):
         pass
+
+    def dbml_helper(self, data):
+
+        dt = data.dtypes.reset_index().rename({0:'dtype'}, axis=1)
+
+        replace_map = {'object': 'varchar',
+
+                    'int64': 'int',
+
+                    'float64': 'float'}
+
+        dt['dtype'] = dt['dtype'].replace(replace_map)
+
+        return dt.to_string(index=False, header=False)
     
 
             
