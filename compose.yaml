@@ -1,8 +1,8 @@
 services:
-  jupyter:
-    image: cwill173/jupyterlab_dev
+  dash:
+    image: cwill173/dashcontainer
     ports:
-      - "8888:8888"
+      - "8050:8050"
     env_file:
       - .env
     volumes:
