@@ -258,8 +258,8 @@ class contrans:
         engine = create_engine(f'postgresql+psycopg://{user}:{pw}@{host}:{port}/contrans2024')
         return dbserver, engine
     
-    def connect_to_mongo(self, from_scratch = False):
-        myclient = pymongo.MongoClient(f'mongodb://{self.MONGO_INITDB_ROOT_USERNAME}:{self.MONGO_INITDB_ROOT_PASSWORD}@localhost:27017/')
+    def connect_to_mongo(self, from_scratch = False, host='localhost'):
+        myclient = pymongo.MongoClient(f'mongodb://{self.MONGO_INITDB_ROOT_USERNAME}:{self.MONGO_INITDB_ROOT_PASSWORD}@l{host}:27017/')
         mongo_contrans = myclient['contrans']
         collist = mongo_contrans.list_collection_names()
         if from_scratch and "bills" in collist:
