@@ -403,4 +403,23 @@ class contrans:
                             font=dict(size=12, color="red"))
             return fig
             
+    def biotable(b):
+        myquery = f'''
+        SELECT directordername AS Name,
+            party AS Party,
+            state AS State,
+            CAST(district AS int) AS District,
+            birthyear AS Birthyear,
+            addressinformation_officeaddress AS Address,
+            CONCAT(addressinformation_city, ', ' , addressinformation_district) AS City,
+            addressinformation_zipcode AS Zipcode,
+            addressinformation_phonenumber AS Phone
+        FROM members
+        WHERE bioguideid='{b}'
+        '''
+        mydf = pd.read_sql_query(myquery, con=engine)
+        mydf.columns = [x.capitalize() for x in mydf.columns]
+        mydf = mydf.T.reset_index()
+        mydf = mydf.rename({'index':'', 0:''}, axis=1)
+        return [ff.create_table(mydf)]
 

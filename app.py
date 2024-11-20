@@ -89,12 +89,12 @@ def biotable(b):
     [Input(component_id='dropdown', component_property='value')])
 def bioimage(b):
     myquery = f'''
-    SELECT depiction.imageurl
+    SELECT depiction_imageurl
     FROM members
     WHERE bioguideid='{b}'
     '''
     mydf = pd.read_sql_query(myquery, con=engine)
-    return [mydf['depiction.imageurl'][0]]
+    return [mydf['depiction_imageurl'][0]]
 
 # Run the dash app
 if __name__ == '__main__':
